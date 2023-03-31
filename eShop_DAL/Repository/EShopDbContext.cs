@@ -1,5 +1,6 @@
-﻿using eShop_DAL.Models;
+﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace eShop_DAL.Repository
 {
-    //db context for eShop_DAL.Models
     public class EShopDbContext : DbContext
     {
         public DbSet<Category> Categories { get; set; }
@@ -21,18 +21,22 @@ namespace eShop_DAL.Repository
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
 
-        private readonly string connectionString = "Server = (localdb)\\mssqllocaldb; Database = eShopDB; Trusted_Connection = True; ";
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public EShopDbContext(DbContextOptions<EShopDbContext> options) : base(options)
         {
-            optionsBuilder
-                .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
-                .EnableSensitiveDataLogging(true)
-                .UseSqlServer(connectionString);
+
         }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            DataSeeding seedData = new DataSeeding();
+
+            modelBuilder.Entity<Category>().HasData(seedData.Categories);
+            modelBuilder.Entity<Supplier>().HasData(seedData.Suppliers);
+            modelBuilder.Entity<Product>().HasData(seedData.Products);
+            modelBuilder.Entity<Image>().HasData(seedData.Images);
+            modelBuilder.Entity<Order>().HasData(seedData.Orders);
+            modelBuilder.Entity<Customer>().HasData(seedData.Customers);
         }
     }
 
