@@ -1,4 +1,3 @@
-using System.Collections;
 namespace eShop_UnitTest
 {
     public class UnitTest1
