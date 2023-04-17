@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Logging;
@@ -29,14 +30,7 @@ namespace eShop_DAL.Repository
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            DataSeeding seedData = new DataSeeding();
 
-            modelBuilder.Entity<Category>().HasData(seedData.Categories);
-            modelBuilder.Entity<Supplier>().HasData(seedData.Suppliers);
-            modelBuilder.Entity<Product>().HasData(seedData.Products);
-            modelBuilder.Entity<Image>().HasData(seedData.Images);
-            modelBuilder.Entity<Order>().HasData(seedData.Orders);
-            modelBuilder.Entity<Customer>().HasData(seedData.Customers);
         }
     }
 

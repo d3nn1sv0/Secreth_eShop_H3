@@ -18,12 +18,12 @@ public class ProductRepository : Repository<Product>, IProductRepository
     {
         if (string.IsNullOrWhiteSpace(searchText))
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products.Include(p => p.Images).ToListAsync();
         }
 
         searchText = searchText.Trim().ToLower();
 
-        return await _context.Products
+        return await _context.Products.Include(p => p.Images)
             .Where(p => p.Name.ToLower().Contains(searchText) || p.Description.ToLower().Contains(searchText))
             .ToListAsync();
     }
