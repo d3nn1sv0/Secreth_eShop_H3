@@ -1,4 +1,6 @@
-﻿public class BasketItem
+﻿using Microsoft.EntityFrameworkCore;
+
+public class BasketItem
 {
     public int BasketItemId { get; set; }
     public int Quantity { get; set; }

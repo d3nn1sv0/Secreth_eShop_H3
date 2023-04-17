@@ -41,9 +41,15 @@ namespace eShop_RazorPages.Pages
             ShoppingCart = HttpContext.Session.Get<List<BasketItem>>("ShoppingCart") ?? new List<BasketItem>();
 
             int? customerId = HttpContext.Session.GetInt32("CustomerId");
-            ShoppingCart = customerId != null
-                ? HttpContext.Session.Get<List<BasketItem>>($"ShoppingCart_{customerId}") ?? new List<BasketItem>()
-                : new List<BasketItem>();
+            if (customerId != null)
+            {
+                var basket = HttpContext.Session.Get<Basket>($"ShoppingCart_{customerId}");
+                ShoppingCart = (List<BasketItem>)(basket?.BasketItems ?? new List<BasketItem>());
+            }
+            else
+            {
+                ShoppingCart = new List<BasketItem>();
+            }
         }
 
 
