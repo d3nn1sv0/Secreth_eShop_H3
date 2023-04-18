@@ -9,32 +9,51 @@ namespace eShop_RazorPages.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly ProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISupplierRepository _supplierRepository;
         private readonly EShopDbContext _context;
 
         public const int PageSize = 6;
         public IPagedList<Product> Products { get; set; }
         public List<BasketItem> ShoppingCart { get; set; }
+        public List<Category> Categories { get; set; }
+        public List<Supplier> Suppliers { get; set; }
+
+
         [BindProperty(SupportsGet = true)]
         public int PageNumber { get; set; } = 1;
         public int TotalPages { get; set; }
         public string SearchText { get; set; }
+        public string SelectedCategory { get; set; }
+        public string SelectedSupplier { get; set; }
 
-
-
-
-        public IndexModel(ILogger<IndexModel> logger, ProductRepository productRepository, EShopDbContext context)
+        public IndexModel(ILogger<IndexModel> logger, EShopDbContext context, ProductRepository productRepository, ICategoryRepository categoryRepository, ISupplierRepository supplierRepository)
         {
             _logger = logger;
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
+            _supplierRepository = supplierRepository;
             _context = context;
         }
 
-
-        public async Task OnGetAsync(string searchText)
+        public async Task OnGetAsync(string searchText = null, string selectedCategory = null, string selectedSupplier = null)
         {
             SearchText = searchText ?? string.Empty;
+            SelectedCategory = selectedCategory;
+            SelectedSupplier = selectedSupplier;
 
             var allProducts = await _productRepository.SearchAsync(SearchText);
+
+            if (!string.IsNullOrWhiteSpace(SelectedCategory))
+            {
+                allProducts = allProducts.Where(p => p.Category != null && p.Category.Name == SelectedCategory).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(SelectedSupplier))
+            {
+                allProducts = allProducts.Where(p => p.Supplier != null && p.Supplier.Name == SelectedSupplier).ToList();
+            }
+
 
             Products = new PagedList<Product>(allProducts, PageNumber, PageSize);
 
@@ -50,8 +69,10 @@ namespace eShop_RazorPages.Pages
             {
                 ShoppingCart = new List<BasketItem>();
             }
-        }
 
+            Categories = (List<Category>)await _categoryRepository.GetAllAsync();
+            Suppliers = (List<Supplier>)await _supplierRepository.GetAllAsync();
+        }
 
 
 

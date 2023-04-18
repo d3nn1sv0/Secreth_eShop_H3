@@ -25,16 +25,6 @@ namespace eShop_UnitTest
             // Test searching with a non-existent term (should return an empty result)
             var searchResult4 = await productRepository.SearchAsync("Non-existent term");
             Assert.Empty(searchResult4);
-
-            // Test searching by category name
-            string categoryName = context.Categories.First().Name;
-            var searchResult5 = await productRepository.SearchByCategoryNameAsync(categoryName);
-            Assert.NotEmpty(searchResult5);
-
-            // Test searching by supplier name
-            string supplierName = context.Suppliers.First().Name;
-            var searchResult6 = await productRepository.SearchBySupplierNameAsync(supplierName);
-            Assert.NotEmpty(searchResult6);
         }
     }
 }

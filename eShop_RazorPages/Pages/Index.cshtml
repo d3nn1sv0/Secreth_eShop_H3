@@ -7,12 +7,31 @@
 }
 
 <div class="container">
-    <form method="get">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Search products" name="searchText">
-            <button class="btn btn-outline-secondary" type="submit">Search</button>
-        </div>
+    <form method="get" class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search by product" name="searchText" value="@Model.SearchText" />
+        <select class="form-control mr-sm-2" name="selectedCategory">
+            <option value="">Select Category</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Name">@category.Name</option>
+            }
+        </select>
+        <select class="form-control mr-sm-2" name="selectedSupplier">
+            <option value="">Select Supplier</option>
+            @foreach (var supplier in Model.Suppliers)
+            {
+                <option value="@supplier.Name">@supplier.Name</option>
+            }
+        </select>
+        <select class="form-control mr-sm-2" id="sortPrice">
+            <option value="">Sort by Price</option>
+            <option value="asc">Lowest to Highest</option>
+            <option value="desc">Highest to Lowest</option>
+        </select>
+
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
+
 
     <div class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
@@ -24,12 +43,14 @@
     <div class="row">
         @foreach (var product in Model.Products)
         {
-            <div class="col-md-4">
+            <div class="col-md-4 product-card">
                 <div class="card mb-4 shadow-sm">
                     <img src="@product.Images?.FirstOrDefault()?.Url" class="card-img-top" alt="@product.Name" />
                     <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
                         <p class="card-text">@product.Description</p>
+                        <p class="card-text"><strong>Category:</strong> @product.Category.Name</p>
+                        <p class="card-text"><strong>Supplier:</strong> @product.Supplier.Name</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
@@ -37,9 +58,8 @@
                                     <input type="hidden" name="productId" value="@product.ProductId" />
                                     <button type="submit" class="btn btn-sm btn-outline-secondary">Add to Cart</button>
                                 </form>
-
                             </div>
-                            <small class="text-muted">@product.Price.ToString("C")</small>
+                            <small class="text-muted product-price">@product.Price.ToString("C")</small>
                         </div>
                     </div>
                 </div>
@@ -71,3 +91,33 @@
 
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById("sortPrice").addEventListener("change", function () {
+            let sortOrder = this.value;
+            let productCards = document.getElementsByClassName("product-card");
+
+            let productArray = Array.from(productCards).map(card => {
+                let price = card.querySelector(".product-price").innerText;
+                return {
+                    element: card,
+                    price: parseFloat(price.replace(/[^0-9.-]+/g, ""))
+                };
+            });
+
+            if (sortOrder === "asc") {
+                productArray.sort((a, b) => a.price - b.price);
+            } else if (sortOrder === "desc") {
+                productArray.sort((a, b) => b.price - a.price);
+            }
+
+            let productRow = document.querySelector(".row");
+            productRow.innerHTML = "";
+
+            productArray.forEach(product => {
+                productRow.appendChild(product.element);
+            });
+        });
+    </script>
+}

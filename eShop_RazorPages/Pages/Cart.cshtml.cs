@@ -34,7 +34,7 @@ namespace eShop_RazorPages.Pages
                 // Fetch the products for each BasketItem
                 foreach (var item in basket.BasketItems)
                 {
-                    item.Product = await _context.Products.FindAsync(item.ProductId);
+                    item.Product = await _context.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
                     TotalPrice += item.Product.Price * item.Quantity;
                 }
 
@@ -49,7 +49,8 @@ namespace eShop_RazorPages.Pages
         }
 
 
-        public async Task<IActionResult> OnPostAsync(Dictionary<int, int> quantities)
+
+        public async Task<IActionResult> OnPostAsync(Dictionary<int, int> quantities, int? removeItemId)
         {
             int? customerId = HttpContext.Session.GetInt32("CustomerId");
             if (customerId == null) return NotFound();
@@ -61,12 +62,32 @@ namespace eShop_RazorPages.Pages
             {
                 Console.WriteLine($"Quantities received: {JsonSerializer.Serialize(quantities)}");
 
-                foreach (var item in basket.BasketItems)
+                // Check if a removeItemId is present
+                if (removeItemId.HasValue)
                 {
-                    var quantity = quantities[item.ProductId];
-                    if (quantity > 0)
+                    var itemToRemove = basket.BasketItems.FirstOrDefault(x => x.ProductId == removeItemId.Value);
+                    if (itemToRemove != null)
                     {
-                        item.Quantity = quantity;
+                        basket.BasketItems.Remove(itemToRemove);
+                    }
+                }
+                else
+                {
+                    // Remove the items with quantity equal to zero
+                    var itemsToRemove = basket.BasketItems.Where(item => quantities[item.ProductId] == 0).ToList();
+                    foreach (var item in itemsToRemove)
+                    {
+                        basket.BasketItems.Remove(item);
+                    }
+
+                    // Update the quantities for the remaining items
+                    foreach (var item in basket.BasketItems)
+                    {
+                        var quantity = quantities[item.ProductId];
+                        if (quantity > 0)
+                        {
+                            item.Quantity = quantity;
+                        }
                     }
                 }
 
@@ -79,6 +100,7 @@ namespace eShop_RazorPages.Pages
                 return BadRequest(ex.Message);
             }
         }
+
 
 
     }

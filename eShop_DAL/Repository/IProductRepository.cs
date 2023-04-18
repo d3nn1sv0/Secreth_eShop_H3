@@ -1,6 +1,4 @@
 ﻿public interface IProductRepository : IRepository<Product>
 {
-    Task<IEnumerable<Product>> SearchAsync(string searchText);
-    Task<IEnumerable<Product>> SearchBySupplierNameAsync(string supplierName);
-    Task<IEnumerable<Product>> SearchByCategoryNameAsync(string categoryName);
+    Task<IEnumerable<Product>> SearchAsync(string searchText, string categoryName, string supplierName);
 }

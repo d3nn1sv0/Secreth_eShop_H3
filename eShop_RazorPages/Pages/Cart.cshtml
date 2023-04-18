@@ -11,9 +11,11 @@
         <thead>
             <tr>
                 <th>Product</th>
+                <th>Image</th>
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total Price</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -21,24 +23,32 @@
             {
                 <tr>
                     <td>@item.Product.Name</td>
+                    <td>
+                        <img src="@item.Product.Images?.FirstOrDefault()?.Url" alt="@item.Product.Name" style="width: 50px; height: auto;" />
+                    </td>
                     <td>@item.Product.Price.ToString("C")</td>
                     <td>
-                        <input type="number" min="1" id="quantity_@item.ProductId" name="quantities[@item.ProductId]" value="@item.Quantity">
+                        <input type="number" min="0" id="quantity_@item.ProductId" name="quantities[@item.ProductId]" value="@item.Quantity">
                     </td>
                     <td>@(string.Format("{0:C}", item.Product.Price * item.Quantity))</td>
+                    <td>
+                        <button type="submit" name="removeItemId" value="@item.ProductId" class="btn btn-danger">Remove</button>
+                    </td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3" class="text-right"><strong>Total Price:</strong></td>
+                <td colspan="4" class="text-right"><strong>Total Price:</strong></td>
                 <td>@Model.TotalPrice.ToString("C")</td>
+                <td></td>
             </tr>
         </tfoot>
     </table>
 
     <button class="btn btn-primary" type="submit">Update Cart</button>
+    <a class="btn btn-success" href="/Checkout">Checkout</a>
+    <a href="@Url.Page("Index")" class="btn btn-secondary">Continue Shopping</a>
 
     <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
 </form>
-

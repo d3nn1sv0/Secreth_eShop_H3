@@ -12,6 +12,7 @@ public class Customer
     [DataType(DataType.Password)]
     public string Password { get; set; }
     public string? PhoneNumber { get; set; }
+    public string? ShippingAddress { get; set; }
 
     public ICollection<Order>? Orders { get; set; }
     public Basket? Basket { get; set; }
