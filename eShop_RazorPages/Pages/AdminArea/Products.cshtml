@@ -1,0 +1,65 @@
+﻿@page
+@model ProductsModel
+@{
+    ViewData["Title"] = "Admin Area - Manage Products";
+}
+
+<h2>Admin Area - Manage Products</h2>
+
+<button id="toggleHidden" class="btn btn-secondary mb-3">Show Hidden Products</button>
+<a asp-page="./CreateProduct" class="btn btn-success mb-3">Create Product</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Supplier</th>
+            <th>Category</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr class="@(product.IsVisible ? "" : "hidden-product")">
+                <td>@product.ProductId</td>
+                <td>@product.Name</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@product.Description</td>
+                <td>@product.Supplier.Name</td>
+                <td>@product.Category.Name</td>
+                <td>
+                    <a asp-page="./EditProduct" asp-route-id="@product.ProductId" class="btn btn-primary">Edit</a>
+                </td>
+                <td>
+                    <form method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@product.ProductId" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to hide this product?');">@(product.IsVisible ? "Hide" : "Unhide")</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.getElementById("toggleHidden").addEventListener("click", function () {
+            this.classList.toggle("show-hidden");
+            var hiddenProducts = document.getElementsByClassName("hidden-product");
+            for (var i = 0; i < hiddenProducts.length; i++) {
+                hiddenProducts[i].classList.toggle("d-none");
+            }
+            if (this.classList.contains("show-hidden")) {
+                this.textContent = "Hide Hidden Products";
+            } else {
+                this.textContent = "Show Hidden Products";
+            }
+        });
+    </script>
+}
+

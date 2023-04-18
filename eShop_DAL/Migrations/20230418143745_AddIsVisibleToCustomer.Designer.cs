@@ -12,8 +12,8 @@ using eShop_DAL.Repository;
 namespace eShop_DAL.Migrations
 {
     [DbContext(typeof(EShopDbContext))]
-    [Migration("20230418000138_Initial")]
-    partial class Initial
+    [Migration("20230418143745_AddIsVisibleToCustomer")]
+    partial class AddIsVisibleToCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,9 @@ namespace eShop_DAL.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()

@@ -13,6 +13,7 @@ public class Customer
     public string Password { get; set; }
     public string? PhoneNumber { get; set; }
     public string? ShippingAddress { get; set; }
+    public bool IsVisible { get; set; } = true;
 
     public ICollection<Order>? Orders { get; set; }
     public Basket? Basket { get; set; }

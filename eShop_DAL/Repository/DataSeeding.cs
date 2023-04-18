@@ -20,13 +20,13 @@ namespace eShop_DAL.Repository
             //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             #region Seed Datamodels
-            //// Remove existing data from tables
-            //context.Images.RemoveRange(context.Images);
-            //context.Products.RemoveRange(context.Products);
-            //context.Categories.RemoveRange(context.Categories);
-            //context.Suppliers.RemoveRange(context.Suppliers);
-            ////context.Customers.RemoveRange(context.Customers);
-            ////context.Orders.RemoveRange(context.Orders);
+            // Remove existing data from tables
+            context.Images.RemoveRange(context.Images);
+            context.Products.RemoveRange(context.Products);
+            context.Categories.RemoveRange(context.Categories);
+            context.Suppliers.RemoveRange(context.Suppliers);
+            context.Customers.RemoveRange(context.Customers);
+            context.Orders.RemoveRange(context.Orders);
 
             //context.SaveChanges();
 
@@ -131,7 +131,6 @@ namespace eShop_DAL.Repository
             var adminUser = await context.Customers.SingleOrDefaultAsync(c => c.Email == adminEmail);
             if (adminUser == null)
             {
-                var passwordHasher = new PasswordHasher<Customer>();
                 adminUser = new Customer
                 {
                     FirstName = "Admin",
@@ -139,7 +138,7 @@ namespace eShop_DAL.Repository
                     Email = adminEmail,
                     PhoneNumber = "1234567890",
                     ShippingAddress = "123 Admin Street",
-                    Password = passwordHasher.HashPassword(null, "Admin@123")
+                    Password = BCrypt.Net.BCrypt.HashPassword("Admin@123")
                 };
                 context.Customers.Add(adminUser);
                 await context.SaveChangesAsync();

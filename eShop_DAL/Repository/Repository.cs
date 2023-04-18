@@ -13,10 +13,22 @@ public class Repository<T> : IRepository<T> where T : class
     }
 
     // Retrieve all entities of type T
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public async Task<IEnumerable<T>> GetAllAsync(string includeProperties = null)
     {
-        return await _dbSet.ToListAsync();
+        IQueryable<T> query = _dbSet;
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            foreach (var includeProperty in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty.Trim());
+            }
+        }
+
+        return await query.ToListAsync();
     }
+
+
 
     // Retrieve an entity of type T by its ID
     public async Task<T> GetByIdAsync(int id)

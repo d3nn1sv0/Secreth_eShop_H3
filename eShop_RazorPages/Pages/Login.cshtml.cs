@@ -36,7 +36,7 @@ public class LoginModel : PageModel
             if (customer != null && BCrypt.Net.BCrypt.Verify(Input.Password, customer.Password))
             {
                 HttpContext.Session.SetInt32("CustomerId", customer.CustomerId);
-
+                HttpContext.Session.SetString("UserEmail", customer.Email);
                 return RedirectToPage("/Index");
             }
             else

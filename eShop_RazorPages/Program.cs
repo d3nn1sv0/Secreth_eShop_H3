@@ -41,7 +41,7 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-await DataSeeding.InitializeAsync(app.Services);
+//await DataSeeding.InitializeAsync(app.Services);
 
 
 // Configure the HTTP request pipeline.
