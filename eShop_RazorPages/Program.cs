@@ -29,10 +29,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
 var app = builder.Build();
 
-DataSeeding.Initialize(app.Services);
+await DataSeeding.InitializeAsync(app.Services);
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -49,8 +49,6 @@ app.UseSession();
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseAuthorization();
 
 app.MapRazorPages();
