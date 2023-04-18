@@ -21,4 +21,8 @@
     <ProjectReference Include="..\eShop_DAL\eShop_DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\" />
+  </ItemGroup>
+
 </Project>

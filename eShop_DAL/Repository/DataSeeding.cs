@@ -16,8 +16,8 @@ namespace eShop_DAL.Repository
         {
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<EShopDbContext>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             #region Seed Datamodels
             //// Remove existing data from tables
@@ -30,140 +30,121 @@ namespace eShop_DAL.Repository
 
             //context.SaveChanges();
 
-            //int seed = 80085;
+            int seed = 80085;
 
-            //// Categories
-            //var categories = new Faker<Category>()
-            //        .RuleFor(c => c.Name, f => f.Commerce.Categories(1).First())
-            //        .UseSeed(seed)
-            //        .Generate(5);
+            // Categories
+            var categories = new Faker<Category>()
+                    .RuleFor(c => c.Name, f => f.Commerce.Categories(1).First())
+                    .UseSeed(seed)
+                    .Generate(5);
 
-            //context.Categories.AddRange(categories);
-            //context.SaveChanges();
+            context.Categories.AddRange(categories);
+            context.SaveChanges();
 
-            //// Suppliers
-            //var suppliers = new Faker<Supplier>()
-            //        .RuleFor(s => s.Name, f => f.Company.CompanyName())
-            //        .UseSeed(seed)
-            //        .Generate(3);
+            // Suppliers
+            var suppliers = new Faker<Supplier>()
+                    .RuleFor(s => s.Name, f => f.Company.CompanyName())
+                    .UseSeed(seed)
+                    .Generate(3);
 
-            //context.Suppliers.AddRange(suppliers);
-            //context.SaveChanges();
+            context.Suppliers.AddRange(suppliers);
+            context.SaveChanges();
 
-            //// Products
-            //var products = new Faker<Product>()
-            //        .RuleFor(p => p.Name, f => f.Commerce.ProductName())
-            //        .RuleFor(p => p.Description, f => f.Lorem.Sentence())
-            //        .RuleFor(p => p.Price, f => f.Random.Decimal(1.00m, 100.00m))
-            //        .RuleFor(p => p.CategoryId, f => f.PickRandom(categories).CategoryId)
-            //        .RuleFor(p => p.SupplierId, f => f.PickRandom(suppliers).SupplierId)
-            //        .UseSeed(seed)
-            //        .Generate(25);
+            // Products
+            var products = new Faker<Product>()
+                    .RuleFor(p => p.Name, f => f.Commerce.ProductName())
+                    .RuleFor(p => p.Description, f => f.Lorem.Sentence())
+                    .RuleFor(p => p.Price, f => f.Random.Decimal(1.00m, 100.00m))
+                    .RuleFor(p => p.CategoryId, f => f.PickRandom(categories).CategoryId)
+                    .RuleFor(p => p.SupplierId, f => f.PickRandom(suppliers).SupplierId)
+                    .UseSeed(seed)
+                    .Generate(25);
 
-            //context.Products.AddRange(products);
-            //context.SaveChanges();
+            context.Products.AddRange(products);
+            context.SaveChanges();
 
-            //// Images
-            //var images = new Faker<Image>()
-            //        .RuleFor(i => i.Url, f => f.Image.PicsumUrl())
-            //        .RuleFor(i => i.ProductId, f => f.PickRandom(products).ProductId)
-            //        .UseSeed(seed)
-            //        .Generate(25);
+            // Images
+            var images = new Faker<Image>()
+                    .RuleFor(i => i.Url, f => f.Image.PicsumUrl())
+                    .RuleFor(i => i.ProductId, f => f.PickRandom(products).ProductId)
+                    .UseSeed(seed)
+                    .Generate(25);
 
-            //context.Images.AddRange(images);
-            //context.SaveChanges();
+            context.Images.AddRange(images);
+            context.SaveChanges();
 
-            //// Customers
-            //var customers = new Faker<Customer>()
-            //        .RuleFor(c => c.FirstName, f => f.Name.FirstName())
-            //        .RuleFor(c => c.LastName, f => f.Name.LastName())
-            //        .RuleFor(c => c.Email, (f, c) => f.Internet.Email(c.FirstName, c.LastName))
-            //        .RuleFor(c => c.PhoneNumber, f => f.Phone.PhoneNumber())
-            //        .RuleFor(c => c.ShippingAddress, f => f.Address.StreetAddress())
-            //        .RuleFor(c => c.Password, f => {
-            //            var passwordHasher = new PasswordHasher<Customer>();
-            //            return passwordHasher.HashPassword(null, f.Internet.Password());
-            //        })
-            //        .UseSeed(seed)
-            //        .Generate(1);
+            // Customers
+            var customers = new Faker<Customer>()
+                    .RuleFor(c => c.FirstName, f => f.Name.FirstName())
+                    .RuleFor(c => c.LastName, f => f.Name.LastName())
+                    .RuleFor(c => c.Email, (f, c) => f.Internet.Email(c.FirstName, c.LastName))
+                    .RuleFor(c => c.PhoneNumber, f => f.Phone.PhoneNumber())
+                    .RuleFor(c => c.ShippingAddress, f => f.Address.StreetAddress())
+                    .RuleFor(c => c.Password, f =>
+                    {
+                        var passwordHasher = new PasswordHasher<Customer>();
+                        return passwordHasher.HashPassword(null, f.Internet.Password());
+                    })
+                    .UseSeed(seed)
+                    .Generate(1);
 
-            //context.Customers.AddRange(customers);
-            //context.SaveChanges();
+            context.Customers.AddRange(customers);
+            context.SaveChanges();
 
-            //// Orders
-            //var orders = new Faker<Order>()
-            //        .RuleFor(o => o.OrderDate, f => f.Date.Past(1))
-            //        .RuleFor(o => o.CustomerId, f => f.PickRandom(customers).CustomerId)
-            //        .UseSeed(seed)
-            //        .Generate(1);
+            // Orders
+            var orders = new Faker<Order>()
+                    .RuleFor(o => o.OrderDate, f => f.Date.Past(1))
+                    .RuleFor(o => o.CustomerId, f => f.PickRandom(customers).CustomerId)
+                    .UseSeed(seed)
+                    .Generate(1);
 
-            //context.Orders.AddRange(orders);
-            //context.SaveChanges();
+            context.Orders.AddRange(orders);
+            context.SaveChanges();
             #endregion
 
-            // Create admin role if it doesn't exist
-            if (!await roleManager.RoleExistsAsync("Admin"))
-            {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
+            #region Create Admin for Identity
+            //// Create admin role if it doesn't exist
+            //if (!await roleManager.RoleExistsAsync("Admin"))
+            //{
+            //    await roleManager.CreateAsync(new IdentityRole("Admin"));
+            //}
+
+            //// Create admin user if it doesn't exist
+            //var adminUser = await userManager.FindByNameAsync("admin@example.com");
+            //if (adminUser == null)
+            //{
+            //    adminUser = new IdentityUser
+            //    {
+            //        UserName = "admin@example.com",
+            //        Email = "admin@example.com"
+            //    };
+            //    var result = await userManager.CreateAsync(adminUser, "Admin@123");
+            //    if (result.Succeeded)
+            //    {
+            //        await userManager.AddToRoleAsync(adminUser, "Admin");
+            //    }
+            //}
+            #endregion
 
             // Create admin user if it doesn't exist
-            var adminUser = await userManager.FindByNameAsync("admin@example.com");
+            var adminEmail = "admin@example.com";
+            var adminUser = await context.Customers.SingleOrDefaultAsync(c => c.Email == adminEmail);
             if (adminUser == null)
             {
-                adminUser = new IdentityUser
+                var passwordHasher = new PasswordHasher<Customer>();
+                adminUser = new Customer
                 {
-                    UserName = "admin@example.com",
-                    Email = "admin@example.com"
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Email = adminEmail,
+                    PhoneNumber = "1234567890",
+                    ShippingAddress = "123 Admin Street",
+                    Password = passwordHasher.HashPassword(null, "Admin@123")
                 };
-                var result = await userManager.CreateAsync(adminUser, "Admin@123");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
+                context.Customers.Add(adminUser);
+                await context.SaveChangesAsync();
             }
 
-
-
-            #region legacy
-            // Generate Categories
-            //var categoryFaker = new Faker<Category>()
-            //    .RuleFor(c => c.Name, f => f.Commerce.Categories(1).First());
-
-            //var categories = categoryFaker.Generate(5);
-            //context.Categories.AddRange(categories);
-            //context.SaveChanges();
-
-            //// Generate Suppliers
-            //var supplierFaker = new Faker<Supplier>()
-            //    .RuleFor(s => s.Name, f => f.Company.CompanyName());
-
-            //var suppliers = supplierFaker.Generate(3);
-            //context.Suppliers.AddRange(suppliers);
-            //context.SaveChanges();
-
-            //// Generate Products with Images
-            //var productFaker = new Faker<Product>()
-            //    .RuleFor(p => p.Name, f => f.Commerce.ProductName())
-            //    .RuleFor(p => p.Description, f => f.Lorem.Paragraph())
-            //    .RuleFor(p => p.Price, f => Math.Round(f.Finance.Amount(1, 100), 2))
-            //    .RuleFor(p => p.CategoryId, f => f.PickRandom(categories).CategoryId)
-            //    .RuleFor(p => p.SupplierId, f => f.PickRandom(suppliers).SupplierId);
-
-            //var products = productFaker.Generate(25);
-            //context.Products.AddRange(products);
-            //context.SaveChanges();
-
-            //var imageFaker = new Faker<Image>()
-            //    .RuleFor(i => i.Url, f => f.Image.PicsumUrl())
-            //    .RuleFor(i => i.ProductId, f => f.PickRandom(products).ProductId);
-
-            //var images = imageFaker.Generate(50);
-
-            //// Add images to the context
-            //context.Images.AddRange(images);
-            //context.SaveChanges();
-            #endregion
         }
-}
+    }
 }

@@ -12,15 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<EShopDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(ProductRepository), typeof(ProductRepository));
 builder.Services.AddScoped(typeof(BasketRepository), typeof(BasketRepository));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<EShopDbContext>()
-    .AddDefaultTokenProviders();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -28,18 +26,18 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Admin", policy => policy.RequireRole("Admin")); 
-});
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+
+#region Identity Services
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie();
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+//    .AddEntityFrameworkStores<EShopDbContext>()
+//    .AddDefaultTokenProviders();
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("Admin", policy => policy.RequireRole("Admin")); 
+//});
+#endregion
 
 var app = builder.Build();
 
@@ -62,12 +60,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-});
-
 
 app.MapRazorPages();
 
