@@ -1,5 +1,8 @@
-﻿public class Image
+﻿using System.ComponentModel.DataAnnotations;
+
+public class Image
 {
+    [Key]
     public int ImageId { get; set; }
     public string? Url { get; set; }
 

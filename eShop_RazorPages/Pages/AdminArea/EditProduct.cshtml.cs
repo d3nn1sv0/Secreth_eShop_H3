@@ -33,7 +33,7 @@ public class EditProductModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        ProductCreateViewModel.Product = await _productRepository.GetByIdAsync(id);
+        ProductCreateViewModel.Product = await _productRepository.GetByIdAsyncWithIncludes(id, "Images");
         if (ProductCreateViewModel.Product == null)
         {
             return NotFound();
@@ -57,7 +57,7 @@ public class EditProductModel : PageModel
             return Page();
         }
 
-        var existingProduct = await _productRepository.GetByIdAsync(id);
+        var existingProduct = await _productRepository.GetByIdAsyncWithIncludes(id, "Images");
         if (existingProduct == null)
         {
             return NotFound();
@@ -72,9 +72,31 @@ public class EditProductModel : PageModel
 
         existingProduct.IsVisible = ProductCreateViewModel.Product.IsVisible;
 
+        if (!string.IsNullOrEmpty(ImageUrl))
+        {
+            if (existingProduct.Images != null)
+            {
+                foreach (var existingImage in existingProduct.Images.ToList())
+                {
+                    existingProduct.Images.Remove(existingImage);
+                    await _imageRepository.DeleteAsync(existingImage.ImageId);
+                }
+            }
+
+            var newImage = new Image { Url = ImageUrl, ProductId = existingProduct.ProductId };
+            await _imageRepository.CreateAsync(newImage);
+
+            if (existingProduct.Images == null)
+            {
+                existingProduct.Images = new List<Image>();
+            }
+            existingProduct.Images.Add(newImage);
+        }
+
         await _productRepository.UpdateAsync(existingProduct);
 
         return RedirectToPage("./Products");
     }
+
 
 }
