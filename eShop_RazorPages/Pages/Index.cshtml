@@ -32,14 +32,41 @@
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
 
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.FeaturedProducts.Count; i++)
+            {
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @i"></button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @for (int i = 0; i < Model.FeaturedProducts.Count; i++)
+            {
+                var product = Model.FeaturedProducts[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <img src="@product.Images?.FirstOrDefault()?.Url" class="d-block w-100" alt="@product.Name">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>@product.Name</h5>
+                        <p>@product.Description</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 
     <div class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
             <a href="/Cart" class="btn btn-sm btn-outline-secondary">View Cart (@Model.ShoppingCart.Sum(i => i.Quantity))</a>
         </div>
     </div>
-
-
 
     <div class="row">
         @foreach (var product in Model.Products)

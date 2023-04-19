@@ -18,6 +18,8 @@ namespace eShop_RazorPages.Pages
         public List<BasketItem> ShoppingCart { get; set; }
         public List<Category> Categories { get; set; }
         public List<Supplier> Suppliers { get; set; }
+        public List<Product> FeaturedProducts { get; set; }
+
 
 
         [BindProperty(SupportsGet = true)]
@@ -58,6 +60,12 @@ namespace eShop_RazorPages.Pages
             Products = new PagedList<Product>(allProducts, PageNumber, PageSize);
 
             ShoppingCart = HttpContext.Session.Get<List<BasketItem>>("ShoppingCart") ?? new List<BasketItem>();
+
+            var featuredProductIds = new List<int> { 1, 2, 3 };
+            FeaturedProducts = allProducts.Where(p => featuredProductIds.Contains(p.ProductId)).ToList();
+            //FeaturedProducts = allProducts.Take(3).ToList();
+
+
 
             int? customerId = HttpContext.Session.GetInt32("CustomerId");
             if (customerId != null)
