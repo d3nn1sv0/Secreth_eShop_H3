@@ -40,12 +40,13 @@
     </div>
 
 
+
     <div class="row">
         @foreach (var product in Model.Products)
         {
             <div class="col-md-4 product-card">
                 <div class="card mb-4 shadow-sm">
-                    <img src="@product.Images?.FirstOrDefault()?.Url" class="card-img-top" alt="@product.Name" />
+                    <img src="@product.Images?.FirstOrDefault()?.Url" class="card-img-top image-hover" alt="@product.Name" />
                     <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
                         <p class="card-text">@product.Description</p>
