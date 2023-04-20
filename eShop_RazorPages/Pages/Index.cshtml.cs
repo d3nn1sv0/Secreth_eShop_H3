@@ -20,8 +20,6 @@ namespace eShop_RazorPages.Pages
         public List<Supplier> Suppliers { get; set; }
         public List<Product> FeaturedProducts { get; set; }
 
-
-
         [BindProperty(SupportsGet = true)]
         public int PageNumber { get; set; } = 1;
         public int TotalPages { get; set; }
