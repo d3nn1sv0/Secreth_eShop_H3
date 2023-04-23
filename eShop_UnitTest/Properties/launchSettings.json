@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "eShop_UnitTest": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:56651;http://localhost:56653"
+    }
+  }
+}
