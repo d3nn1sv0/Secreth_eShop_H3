@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using eShop_DAL.Repository;
+using Newtonsoft.Json;
 
 namespace eShop_API.Controllers
 {
@@ -16,34 +17,48 @@ namespace eShop_API.Controllers
             _productRepository = productRepository;
         }
 
-        /// <summary>
-        /// Retrieves a list of all products.
-        /// </summary>
-        /// <returns>A list of Product objects</returns>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        private ProductDto MapToDto(Product product)
         {
-            var products = await _productRepository.GetAllAsync();
-            return Ok(products);
+            return new ProductDto
+            {
+                ProductId = product.ProductId,
+                Name = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                IsVisible = product.IsVisible,
+                CategoryId = product.CategoryId,
+                Category = new CategoryDto { CategoryId = product.Category.CategoryId, Name = product.Category.Name },
+                SupplierId = product.SupplierId,
+                Supplier = new SupplierDto { SupplierId = product.Supplier.SupplierId, Name = product.Supplier.Name, Email = product.Supplier.Email, PhoneNumber = product.Supplier.PhoneNumber },
+                Images = product.Images.Select(i => new ImageDto
+                {
+                    ImageId = i.ImageId,
+                    Url = i.Url,
+                    ProductId = i.ProductId
+                }).ToList()
+            };
         }
 
-        /// <summary>
-        /// Retrieves a single product by its ID.
-        /// </summary>
-        /// <param name="id">The ID of the product</param>
-        /// <returns>A Product object</returns>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var products = await _productRepository.GetAllAsync("Category,Supplier,Images");
+            return Content(JsonConvert.SerializeObject(products.Select(MapToDto)), "application/json");
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
+        {
+            var product = await _productRepository.GetByIdAsyncWithIncludes(id, "Category,Supplier,Images");
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(MapToDto(product));
         }
+
 
         /// <summary>
         /// Searches for products by search text, category name, and/or supplier name.
@@ -53,13 +68,13 @@ namespace eShop_API.Controllers
         /// <param name="supplierName">The supplier name to filter products by (optional)</param>
         /// <returns>A list of Product objects that match the search criteria</returns>
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Product>>> SearchProducts(
-            [FromQuery] string searchText,
+        public async Task<ActionResult<IEnumerable<ProductDto>>> SearchProducts(
+            [FromQuery] string searchText = "",
             [FromQuery] string categoryName = null,
             [FromQuery] string supplierName = null)
         {
             var products = await _productRepository.SearchAsync(searchText, categoryName, supplierName);
-            return Ok(products);
+            return Ok(products.Select(MapToDto));
         }
 
     }

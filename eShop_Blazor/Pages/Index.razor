@@ -1,0 +1,158 @@
+﻿@page "/"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject ProductService ProductService
+@inject CategoryService CategoryService
+@inject SupplierService SupplierService
+@*@inject CartService CartService*@
+
+<div class="container">
+    <form @onsubmit="ApplyFilter">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search by product" @bind="searchText" />
+        <select class="form-control mr-sm-2" @bind="selectedCategory">
+            <option value="">Select Category</option>
+            @foreach (var category in Categories ?? Enumerable.Empty<Category>())
+            {
+                <option value="@category.Name">@category.Name</option>
+            }
+        </select>
+        <select class="form-control mr-sm-2" @bind="selectedSupplier">
+            <option value="">Select Supplier</option>
+            @foreach (var supplier in Suppliers ?? Enumerable.Empty<Supplier>())
+            {
+                <option value="@supplier.Name">@supplier.Name</option>
+            }
+        </select>
+        <select class="form-control mr-sm-2" @bind="selectedSortPrice">
+            <option value="">Sort by Price</option>
+            <option value="asc">Lowest to Highest</option>
+            <option value="desc">Highest to Lowest</option>
+        </select>
+
+        <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Search</button>
+    </form>
+
+    <div class="row">
+        @foreach (var product in Products ?? Enumerable.Empty<Product>())
+        {
+            <div class="col-md-4 product-card">
+                <div class="card mb-4 shadow-sm">
+                    <img src="@product.Images?.FirstOrDefault()?.Url" class="card-img-top image-hover" alt="@product.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <p class="card-text"><strong>Category:</strong> @product.Category.Name</p>
+                        <p class="card-text"><strong>Supplier:</strong> @product.Supplier.Name</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                                <form method="post" asp-page-handler="AddToBasket">
+                                    <input type="hidden" name="productId" value="@product.ProductId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Add to Cart</button>
+                                </form>
+                            </div>
+                            <small class="text-muted product-price">@product.Price.ToString("C")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private IEnumerable<Product> Products { get; set; }
+    private List<Category> Categories { get; set; } = new List<Category>();
+    private List<Supplier> Suppliers { get; set; } = new List<Supplier>();
+    private List<Product> FeaturedProducts { get; set; }
+    private int cartItemCount;
+    private string searchText;
+
+    private string _selectedCategory;
+    private string selectedCategory
+    {
+        get => _selectedCategory;
+        set
+        {
+            _selectedCategory = value;
+            ApplyFilter();
+        }
+    }
+
+    private string _selectedSupplier;
+    private string selectedSupplier
+    {
+        get => _selectedSupplier;
+        set
+        {
+            _selectedSupplier = value;
+            ApplyFilter();
+        }
+    }
+
+    private string _selectedSortPrice;
+    private string selectedSortPrice
+    {
+        get => _selectedSortPrice;
+        set
+        {
+            _selectedSortPrice = value;
+            ApplySort();
+        }
+    }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        Products = await ProductService.GetProductsAsync();
+        Categories = await CategoryService.GetAllCategoriesAsync();
+        Suppliers = await SupplierService.GetAllSuppliersAsync();
+        // cartItemCount = CartService.GetCartItemCount(); // Uncomment this line once you have implemented the CartService
+    }
+
+    private async Task ApplyFilter()
+    {
+        var queryParams = new Dictionary<string, string>();
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            queryParams.Add("searchText", searchText);
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedCategory))
+        {
+            queryParams.Add("categoryName", selectedCategory);
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedSupplier))
+        {
+            queryParams.Add("supplierName", selectedSupplier);
+        }
+
+        var queryString = new FormUrlEncodedContent(queryParams).ReadAsStringAsync().Result;
+        Products = await Http.GetFromJsonAsync<List<Product>>($"api/products/search?{queryString}");
+
+        StateHasChanged();
+    }
+
+
+    private void ApplySort()
+    {
+        if (selectedSortPrice == "asc")
+        {
+            Products = Products.OrderBy(p => p.Price).ToList();
+        }
+        else if (selectedSortPrice == "desc")
+        {
+            Products = Products.OrderByDescending(p => p.Price).ToList();
+        }
+
+        StateHasChanged();
+    }
+}
