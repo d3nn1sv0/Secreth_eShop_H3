@@ -1,5 +1,10 @@
-﻿@page "/productdetails/{ProductId}"
+﻿@page "/details/{ProductId:int?}"
+@using System.Net.Http.Json
+@inject HttpClient Http
 @inject ProductService ProductService
+@inject CategoryService CategoryService
+@inject SupplierService SupplierService
+@inject NavigationManager NavigationManager
 
 <h3>Product Details</h3>
 
@@ -11,17 +16,58 @@ else
 {
     <h4>@product.Name</h4>
     <p>Price: @product.Price</p>
-    <p>Category: @product.Category.Name</p>
-    <p>Supplier: @product.Supplier.Name</p>
+    @if (product.Category != null)
+    {
+        <p>Category: @(product.Category?.Name ?? "Unknown")</p>
+
+    }
+    else
+    {
+        <p>Category: Unknown</p>
+    }
+    @if (product.Supplier != null)
+    {
+        <p>Category: @(product.Supplier?.Name ?? "Unknown")</p>
+
+    }
+    else
+    {
+        <p>Supplier: Unknown</p>
+    }
     <p>Description: @product.Description</p>
+    @if (product.Images != null && product.Images.Count > 0)
+    {
+        <div class="row">
+            @foreach (var image in product.Images)
+            {
+                <div class="col-md-3">
+                    <img src="@image.Url" class="img-thumbnail" />
+                </div>
+            }
+        </div>
+    }
 }
+
 
 @code {
     [Parameter] public int ProductId { get; set; }
     private Product product;
+    private List<Category> categories = new List<Category>();
+    private List<Supplier> suppliers = new List<Supplier>();
 
     protected override async Task OnInitializedAsync()
     {
-        product = await ProductService.GetProductIdAsync(ProductId);
+        var response = await Http.GetFromJsonAsync<Product>($"api/products/{ProductId}");
+        if (response != null)
+        {
+            product = response;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+
+        categories = await CategoryService.GetAllCategoriesAsync();
+        suppliers = await SupplierService.GetAllSuppliersAsync();
     }
 }

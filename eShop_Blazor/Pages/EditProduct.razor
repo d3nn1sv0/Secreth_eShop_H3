@@ -1,0 +1,97 @@
+﻿@page "/edit/{productId:int?}"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject ProductService ProductService
+@inject CategoryService CategoryService
+@inject SupplierService SupplierService
+@inject NavigationManager NavigationManager
+
+<h1>@(ProductId == null ? "New Product" : "Edit Product")</h1>
+
+@if (product == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" @bind="product.Name" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" id="description" @bind="product.Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" class="form-control" id="price" @bind="product.Price" />
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select class="form-control" id="category" @bind="product.CategoryId">
+                @foreach (var category in categories)
+                {
+                    <option value="@category.CategoryId">@category.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="supplier">Supplier:</label>
+            <select class="form-control" id="supplier" @bind="product.SupplierId">
+                @foreach (var supplier in suppliers)
+                {
+                    <option value="@supplier.SupplierId">@supplier.Name</option>
+                }
+            </select>
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="SaveProduct">@(ProductId == null ? "Create" : "Save")</button>
+    </form>
+}
+
+@code {
+    private Product product;
+    private List<Category> categories = new List<Category>();
+    private List<Supplier> suppliers = new List<Supplier>();
+
+    [Parameter]
+    public int? ProductId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProductId == null)
+        {
+            product = new Product();
+        }
+        else
+        {
+            var response = await Http.GetFromJsonAsync<Product>($"api/products/without-includes/{ProductId}");
+            if (response != null)
+            {
+                product = response;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
+
+        }
+
+        categories = await CategoryService.GetAllCategoriesAsync();
+        suppliers = await SupplierService.GetAllSuppliersAsync();
+    }
+
+    private async Task SaveProduct()
+    {
+        if (ProductId == null)
+        {
+            await Http.PostAsJsonAsync("api/products", product);
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/products/{product.ProductId}", product);
+        }
+
+        NavigationManager.NavigateTo("/");
+    }
+}

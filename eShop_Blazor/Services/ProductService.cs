@@ -17,23 +17,18 @@ public class ProductService
     {
         var response = await _httpClient.GetAsync("api/products");
 
-        // Check if the response was successful
         if (response.IsSuccessStatusCode)
         {
-            // Read the content as a string
             string content = await response.Content.ReadAsStringAsync();
 
-            // Print the content to the console (for debugging)
             Console.WriteLine("API Response: " + content);
 
-            // Deserialize the content to a list of products
             var products = JsonSerializer.Deserialize<List<Product>>(content);
 
             return products;
         }
         else
         {
-            // Handle the error case here (e.g., throw an exception, return an empty list, etc.)
             Console.WriteLine("API Error: " + response.StatusCode + " - " + response.ReasonPhrase);
             return new List<Product>();
         }
@@ -88,6 +83,18 @@ public class ProductService
             return new List<Product>();
         }
     }
+
+    public async Task UpdateProductAsync(Product updatedProduct)
+    {
+        var response = await _httpClient.PutAsJsonAsync($"api/products/{updatedProduct.ProductId}", updatedProduct);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("API Error: " + response.StatusCode + " - " + response.ReasonPhrase);
+            throw new ApplicationException($"Error updating product with ID {updatedProduct.ProductId}: {response.ReasonPhrase}");
+        }
+    }
+
 
 
 

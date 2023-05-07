@@ -43,5 +43,9 @@ public class ProductRepository : Repository<Product>, IProductRepository
         return await query.ToListAsync();
     }
 
+    public Task CreateAsync(Product product) => base.CreateAsync(product);
+    public Task UpdateAsync(Product product) => base.UpdateAsync(product);
+    public Task DeleteAsync(int id) => base.DeleteAsync(id);
+
 
 }
