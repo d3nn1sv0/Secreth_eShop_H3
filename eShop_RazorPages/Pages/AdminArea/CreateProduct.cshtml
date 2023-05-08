@@ -1,0 +1,40 @@
+﻿@page
+@model CreateProductModel
+@{
+    ViewData["Title"] = "Admin Area - Create Product";
+}
+
+<h2>Create New Product</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="ProductCreateViewModel.Product.Name"></label>
+        <input asp-for="ProductCreateViewModel.Product.Name" class="form-control" />
+        <span asp-validation-for="ProductCreateViewModel.Product.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductCreateViewModel.Product.Price"></label>
+        <input asp-for="ProductCreateViewModel.Product.Price" class="form-control" />
+        <span asp-validation-for="ProductCreateViewModel.Product.Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductCreateViewModel.Product.Description"></label>
+        <textarea asp-for="ProductCreateViewModel.Product.Description" class="form-control"></textarea>
+        <span asp-validation-for="ProductCreateViewModel.Product.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductCreateViewModel.Product.SupplierId"></label>
+        <select asp-for="ProductCreateViewModel.SelectedSupplierId" asp-items="Model.Suppliers" class="form-control"></select>
+        <span asp-validation-for="ProductCreateViewModel.Product.SupplierId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductCreateViewModel.Product.CategoryId"></label>
+        <select asp-for="ProductCreateViewModel.SelectedCategoryId" asp-items="Model.Categories" class="form-control"></select>
+        <span asp-validation-for="ProductCreateViewModel.Product.CategoryId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageUrl">Image URL</label>
+        <input asp-for="ImageUrl" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

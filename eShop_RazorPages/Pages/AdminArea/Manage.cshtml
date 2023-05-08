@@ -1,0 +1,22 @@
+﻿@page
+@model eShop_RazorPages.Pages.AdminArea.ManageModel
+@{
+    ViewData["Title"] = "Admin Area - Manage";
+}
+
+<h2>Admin Area - Manage Users and Products</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Users</h3>
+        <p>
+            <a asp-page="/AdminArea/Users">Manage Users</a>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h3>Products</h3>
+        <p>
+            <a asp-page="/AdminArea/Products">Manage Products</a>
+        </p>
+    </div>
+</div>

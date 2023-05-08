@@ -1,0 +1,25 @@
+﻿@page
+@model AccountModel
+@{
+    ViewData["Title"] = "Account";
+}
+
+<h2>Account</h2>
+
+<p>First Name: @Model.Customer.FirstName</p>
+<p>Last Name: @Model.Customer.LastName</p>
+<p>Email: @Model.Customer.Email</p>
+
+<form method="post">
+    <div class="form-group">
+        <label for="PhoneNumber">Phone Number</label>
+        <input class="form-control" id="PhoneNumber" name="PhoneNumber" value="@Model.Customer.PhoneNumber" />
+    </div>
+    <div class="form-group">
+        <label for="ShippingAddress">Shipping Address</label>
+        <input class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.Customer.ShippingAddress" />
+    </div>
+    <button class="btn btn-primary" type="submit">Update Account</button>
+</form>
+
+<a class="btn btn-secondary mt-3" href="Orders">View Orders</a>

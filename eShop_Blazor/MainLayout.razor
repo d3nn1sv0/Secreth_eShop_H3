@@ -1,0 +1,71 @@
+﻿@inherits LayoutComponentBase
+@implements IAsyncDisposable
+@using Microsoft.AspNetCore.Components.Web
+@inject CartService CartService
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eShop_Blazor</title>
+    <base href="~/" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">eShop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            Home
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="create">
+                            Create new product
+                        </NavLink>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class=" cart-badge" >@CartService.GetCartItemCount()</span>
+                        </NavLink>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        @Body
+    </div>
+</body>
+</html>
+
+@code {
+    protected override void OnInitialized()
+    {
+        CartService.CartItemCountChanged += UpdateCartItemCount;
+    }
+
+    private void UpdateCartItemCount()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        CartService.CartItemCountChanged -= UpdateCartItemCount;
+        await Task.CompletedTask;
+    }
+}

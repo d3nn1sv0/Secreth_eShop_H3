@@ -14,48 +14,38 @@ public class ProductRepository : Repository<Product>, IProductRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Product>> SearchAsync(string searchText)
+    public async Task<IEnumerable<Product>> SearchAsync(string searchText, string categoryName = null, string supplierName = null)
     {
-        if (string.IsNullOrWhiteSpace(searchText))
+        var query = _context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Category) 
+            .Include(p => p.Supplier) 
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchText))
         {
-            return await _context.Products.ToListAsync();
+            searchText = searchText.Trim().ToLower();
+            query = query.Where(p => p.Name.ToLower().Contains(searchText) || p.Description.ToLower().Contains(searchText));
         }
 
-        searchText = searchText.Trim().ToLower();
-
-        return await _context.Products
-            .Where(p => p.Name.ToLower().Contains(searchText) || p.Description.ToLower().Contains(searchText))
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Product>> SearchBySupplierNameAsync(string supplierName)
-    {
-        if (string.IsNullOrWhiteSpace(supplierName))
+        if (!string.IsNullOrWhiteSpace(categoryName))
         {
-            return await _context.Products.ToListAsync();
+            categoryName = categoryName.Trim().ToLower();
+            query = query.Where(p => p.Category.Name.ToLower().Contains(categoryName));
         }
 
-        supplierName = supplierName.Trim().ToLower();
-
-        return await _context.Products
-            .Include(p => p.Supplier)
-            .Where(p => p.Supplier.Name.ToLower().Contains(supplierName))
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Product>> SearchByCategoryNameAsync(string categoryName)
-    {
-        if (string.IsNullOrWhiteSpace(categoryName))
+        if (!string.IsNullOrWhiteSpace(supplierName))
         {
-            return await _context.Products.ToListAsync();
+            supplierName = supplierName.Trim().ToLower();
+            query = query.Where(p => p.Supplier.Name.ToLower().Contains(supplierName));
         }
 
-        categoryName = categoryName.Trim().ToLower();
-
-        return await _context.Products
-            .Include(p => p.Category)
-            .Where(p => p.Category.Name.ToLower().Contains(categoryName))
-            .ToListAsync();
+        return await query.ToListAsync();
     }
+
+    public Task CreateAsync(Product product) => base.CreateAsync(product);
+    public Task UpdateAsync(Product product) => base.UpdateAsync(product);
+    public Task DeleteAsync(int id) => base.DeleteAsync(id);
+
 
 }
