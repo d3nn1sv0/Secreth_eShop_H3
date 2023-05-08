@@ -30,3 +30,9 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.cart-badge {
+    background-color: #007bff;
+    color: black;
+}
+
