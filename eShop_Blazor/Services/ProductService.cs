@@ -94,8 +94,4 @@ public class ProductService
             throw new ApplicationException($"Error updating product with ID {updatedProduct.ProductId}: {response.ReasonPhrase}");
         }
     }
-
-
-
-
 }

@@ -6,31 +6,31 @@
 
 @if (CartItems.Count == 0)
 {
-        <p>Your cart is empty.</p>
+    <p>Your cart is empty.</p>
 }
 else
 {
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in CartItems)
-            {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Price.ToString("C", CultureInfo.CurrentCulture)</td>
-                            <td>
-                                <button class="btn btn-danger" @onclick="(() => RemoveFromCart(item))">Remove</button>
-                            </td>
-                        </tr>
-            }
-            </tbody>
-        </table>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in CartItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Price.ToString("C", CultureInfo.CurrentCulture)</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="(() => RemoveFromCart(item))">Remove</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
 
 @code {

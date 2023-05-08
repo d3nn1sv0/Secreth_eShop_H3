@@ -53,7 +53,6 @@ namespace eShop_API.Controllers
             return dto;
         }
 
-
         private Product MapToProduct(CreateProductDto createProductDto)
         {
             return new Product
@@ -98,9 +97,6 @@ namespace eShop_API.Controllers
             if (updateProductDto.Description != null)
                 product.Description = updateProductDto.Description;
 
-            // Note: This assumes that you cannot set IsVisible to false intentionally.
-            // If you need to support setting IsVisible to false, consider making it a nullable bool (bool?)
-            // in UpdateProductDto and checking for null here.
             if (updateProductDto.IsVisible)
                 product.IsVisible = updateProductDto.IsVisible;
 
@@ -110,9 +106,6 @@ namespace eShop_API.Controllers
             if (updateProductDto.SupplierId != 0)
                 product.SupplierId = updateProductDto.SupplierId;
         }
-
-
-
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
@@ -133,7 +126,6 @@ namespace eShop_API.Controllers
 
             return Ok(MapToDto(product));
         }
-
 
         /// <summary>
         /// Searches for products by search text, category name, and/or supplier name.
@@ -174,8 +166,6 @@ namespace eShop_API.Controllers
             return NoContent();
         }
 
-
-
         [HttpPut("hide/{id}")]
         public async Task<ActionResult> HideProduct(int id)
         {
@@ -187,7 +177,6 @@ namespace eShop_API.Controllers
 
             return NoContent();
         }
-
 
         [HttpGet("without-includes/{id}")]
         public async Task<ActionResult<ProductDto>> GetProductWithoutIncludes(int id)
